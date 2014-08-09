@@ -7,7 +7,7 @@ SpaceGDN Java Client
 Instructions will come soon.
 
 #### Example Usage
-```bash
+```java
 // Imports
 import net.boboman13.spacegdnbridge.*;
 
