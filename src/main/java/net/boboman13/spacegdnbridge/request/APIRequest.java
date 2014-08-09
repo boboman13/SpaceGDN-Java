@@ -18,6 +18,7 @@ import java.util.ArrayList;
 public class APIRequest {
 
 	protected Bridge bridge;
+	protected RequestType type;
 
 	protected ArrayList<String> segments = new ArrayList<String>();
 
@@ -50,6 +51,8 @@ public class APIRequest {
 		this.segments.add("channel");
 		this.segments.add(Integer.toString(id));
 
+		this.type = RequestType.CHANNEL;
+
 		return this;
 	}
 
@@ -61,6 +64,8 @@ public class APIRequest {
 	public APIRequest version(int id) {
 		this.segments.add("version");
 		this.segments.add(Integer.toString(id));
+
+		this.type = RequestType.VERSION;
 
 		return this;
 	}
@@ -74,7 +79,39 @@ public class APIRequest {
 		this.segments.add("jar");
 		this.segments.add(Integer.toString(id));
 
+		this.type = RequestType.JAR;
+
 		return this;
+	}
+
+	/**
+	 * Selects a build.
+	 * @param id
+	 * @return
+	 */
+	public APIRequest build(int id) {
+		this.segments.add("build");
+		this.segments.add(Integer.toString(id));
+
+		this.type = RequestType.BUILD;
+
+		return this;
+	}
+
+	/**
+	 * Gets the RequestType.
+	 * @return
+	 */
+	public RequestType getRequestType() {
+		return this.type;
+	}
+
+	/**
+	 * Gets the Bridge.
+	 * @return
+	 */
+	public Bridge getBridge() {
+		return this.bridge;
 	}
 
 	/**
@@ -104,7 +141,7 @@ public class APIRequest {
 	 * Launches the APIRequest.
 	 */
 	public APIResponse go() throws Exception {
-		HttpClient client = new DefaultHttpClient();
+		HttpClient client = new DefaultHttpClient(); // I know this is deprecated, but I'm not sure what to use instead.
 		HttpGet method = new HttpGet(this.buildUrl());
 
 		// must accept JSON
@@ -118,7 +155,7 @@ public class APIRequest {
 		BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
 
 		String content = "";
-		String line = "";
+		String line;
 		while ((line = rd.readLine()) != null) {
 			content += line;
 		}
