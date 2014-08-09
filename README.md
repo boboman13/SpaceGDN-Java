@@ -31,7 +31,10 @@ public class MyClass {
 			.go();
 
 		// Now, since we're retrieving a build - we can access that build.
-		String buildURL = response.build.url;
+		GDNBuild build = response.build;
+		int buildId = build.id;
+		String buildURL = build.url;
+		// All the values you need are accessible from there.
 	}
 }
 
