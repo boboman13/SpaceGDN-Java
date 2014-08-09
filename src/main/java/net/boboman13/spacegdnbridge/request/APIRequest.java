@@ -2,6 +2,7 @@ package net.boboman13.spacegdnbridge.request;
 
 import net.boboman13.spacegdnbridge.Bridge;
 import net.boboman13.spacegdnbridge.response.APIResponse;
+import net.boboman13.spacegdnbridge.response.BridgeException;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -19,6 +20,8 @@ public class APIRequest {
 
 	protected Bridge bridge;
 	protected RequestType type;
+
+	protected int page = 1;
 
 	protected ArrayList<String> segments = new ArrayList<String>();
 
@@ -101,6 +104,17 @@ public class APIRequest {
 	}
 
 	/**
+	 * Paginates the result data.
+	 * @param page
+	 * @return
+	 */
+	public APIRequest page(int page) {
+		this.page = page;
+
+		return this;
+	}
+
+	/**
 	 * Gets the RequestType.
 	 * @return
 	 */
@@ -135,16 +149,23 @@ public class APIRequest {
 	 * Builds the URL for the request.
 	 * @return
 	 */
-	private String buildUrl() {
+	private String buildUrl() throws BridgeException {
 		String url = bridge.getHost();
 
 		// append version
 		url += "/" + bridge.getVersion();
 
 		// append segments
+		if (this.segments.size() < 1) {
+			throw new BridgeException("Must supply at least one URL parameter.");
+		}
+
 		for (String segment : this.segments) {
 			url += "/" + segment;
 		}
+
+		// paginate
+		url += "?page=" + this.page;
 
 		// debug
 		if (this.bridge.getDebug()) {
@@ -157,7 +178,7 @@ public class APIRequest {
 	/**
 	 * Launches the APIRequest.
 	 */
-	public APIResponse go() throws Exception {
+	public APIResponse go() throws BridgeException {
 		HttpClient client = new DefaultHttpClient(); // I know this is deprecated, but I'm not sure what to use instead.
 		HttpGet method = new HttpGet(this.buildUrl());
 
@@ -165,16 +186,22 @@ public class APIRequest {
 		method.addHeader("Accept", "application/json");
 		method.addHeader("User-Agent", "SpaceGDN-Java-Client");
 
-		// execute
-		HttpResponse response = client.execute(method);
-
-		// get back response
-		BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-
 		String content = "";
-		String line;
-		while ((line = rd.readLine()) != null) {
-			content += line;
+
+		try {
+			// execute
+			HttpResponse response = client.execute(method);
+
+			// get back response
+			BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+
+			String line;
+			while ((line = rd.readLine()) != null) {
+				content += line;
+			}
+
+		} catch (Exception ex) {
+			throw new BridgeException(ex.getMessage());
 		}
 
 		// parse to JSON

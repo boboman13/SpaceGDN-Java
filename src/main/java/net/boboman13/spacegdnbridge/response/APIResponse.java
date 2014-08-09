@@ -21,6 +21,11 @@ public class APIResponse {
 	public GDNJar jar = null;
 	public GDNBuild build = null;
 
+	public GDNChannel[] channels = null;
+	public GDNVersion[] versions = null;
+	public GDNJar[] jars = null;
+	public GDNBuild[] builds = null;
+
 	/**
 	 * Creates an APIResponse object.
 	 * @param request
@@ -60,6 +65,40 @@ public class APIResponse {
 			}
 		} else {
 			// handle multiple
+			switch (request.getRequestType()) {
+				case CHANNEL:
+					GDNChannel[] channels = new GDNChannel[array.length()];
+					for (int i = 0; i < array.length(); i++) {
+						channels[i] = new GDNChannel(array.getJSONObject(i));
+					}
+
+					this.channels = channels;
+					return;
+				case VERSION:
+					GDNVersion[] versions = new GDNVersion[array.length()];
+					for (int i = 0; i < array.length(); i++) {
+						versions[i] = new GDNVersion(array.getJSONObject(i));
+					}
+
+					this.versions = versions;
+					return;
+				case JAR:
+					GDNJar[] jars = new GDNJar[array.length()];
+					for (int i = 0; i < array.length(); i++) {
+						jars[i] = new GDNJar(array.getJSONObject(i));
+					}
+
+					this.jars = jars;
+					return;
+				case BUILD:
+					GDNBuild[] builds = new GDNBuild[array.length()];
+					for (int i = 0; i < array.length(); i++) {
+						builds[i] = new GDNBuild(array.getJSONObject(i));
+					}
+
+					this.builds = builds;
+					return;
+			}
 		}
 
 	}

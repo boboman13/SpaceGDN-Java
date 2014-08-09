@@ -6,7 +6,7 @@
 
     <groupId>net.boboman13</groupId>
     <artifactId>spacegdnbridge</artifactId>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>0.1.1-SNAPSHOT</version>
     <name>SpaceGDN Bridge</name>
 
     <dependencies>
