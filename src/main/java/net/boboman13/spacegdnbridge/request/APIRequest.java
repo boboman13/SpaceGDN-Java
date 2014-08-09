@@ -37,8 +37,10 @@ public class APIRequest {
 	 */
 	public APIRequest get(String object) {
 		String segment = object.substring(0, object.length() - 1);
-
 		this.segments.add(segment);
+
+		setRequestType(segment);
+
 		return this;
 	}
 
@@ -112,6 +114,21 @@ public class APIRequest {
 	 */
 	public Bridge getBridge() {
 		return this.bridge;
+	}
+
+	/**
+	 * Set the RequestType.
+	 * @param type
+	 */
+	private void setRequestType(String type) {
+		if (type.equalsIgnoreCase("build"))
+			this.type = RequestType.BUILD;
+		else if (type.equalsIgnoreCase("jar"))
+			this.type = RequestType.JAR;
+		else if (type.equalsIgnoreCase("version"))
+			this.type = RequestType.VERSION;
+		else if (type.equalsIgnoreCase("channel"))
+			this.type = RequestType.CHANNEL;
 	}
 
 	/**

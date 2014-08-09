@@ -9,14 +9,17 @@ import org.json.JSONObject;
  */
 public class APIResponse {
 
-	private APIRequest request;
+	protected APIRequest request;
 	protected JSONObject root = null;
 
-	private String error = null;
-	private boolean success = false;
+	public String error = null;
+	public boolean success = false;
 
 	// Response values
-	protected GDNJar jar = null;
+	public GDNChannel channel = null;
+	public GDNVersion version = null;
+	public GDNJar jar = null;
+	public GDNBuild build = null;
 
 	/**
 	 * Creates an APIResponse object.
@@ -31,9 +34,9 @@ public class APIResponse {
 		this.success = object.getBoolean("success");
 
 		// handle error
-		String error = object.getString("error");
-		if (error.length() > 0) {
-			this.error = error;
+		JSONObject error = object.getJSONObject("error");
+		if (error.has("message")) {
+			this.error = error.getString("message");
 			return;
 		}
 
@@ -43,11 +46,17 @@ public class APIResponse {
 			// handle singles
 			switch (request.getRequestType()) {
 				case CHANNEL:
+					this.channel = new GDNChannel(array.getJSONObject(0));
+					return;
 				case VERSION:
+					this.version = new GDNVersion(array.getJSONObject(0));
+					return;
 				case JAR:
-					this.jar = new GDNJar(array.getJSONObject(1));
+					this.jar = new GDNJar(array.getJSONObject(0));
 					return;
 				case BUILD:
+					this.build = new GDNBuild(array.getJSONObject(0));
+					return;
 			}
 		} else {
 			// handle multiple
