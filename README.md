@@ -37,6 +37,7 @@ public class MyClass {
 		// All the values you need are accessible from there.
 	}
 }
+```
 
 ### Documentation
 Full documentation to follow.
